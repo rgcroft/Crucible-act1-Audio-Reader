@@ -1,0 +1,652 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Crucible Act I - PDF Audio Reader</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Georgia', serif;
+            background: #1a1a1a;
+            color: #e0e0e0;
+            overflow: hidden;
+        }
+
+        .container {
+            display: grid;
+            grid-template-columns: 280px 1fr;
+            height: 100vh;
+            gap: 0;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            background: #2d2d2d;
+            padding: 20px;
+            overflow-y: auto;
+            box-shadow: 2px 0 10px rgba(0, 0, 0, 0.5);
+            z-index: 10;
+        }
+
+        .sidebar h2 {
+            color: #d4af37;
+            margin-bottom: 20px;
+            font-size: 1.3rem;
+            text-align: center;
+            border-bottom: 2px solid #d4af37;
+            padding-bottom: 10px;
+        }
+
+        .scene-button {
+            width: 100%;
+            padding: 12px;
+            margin: 6px 0;
+            background: #3a3a3a;
+            color: #e0e0e0;
+            border: 1px solid #555;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 0.9rem;
+            text-align: left;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .scene-button:hover {
+            background: #d4af37;
+            color: #1a1a1a;
+            transform: translateX(3px);
+        }
+
+        .scene-button.active {
+            background: #d4af37;
+            color: #1a1a1a;
+            font-weight: bold;
+            border: 2px solid #fff;
+        }
+
+        .timestamp {
+            font-size: 0.75rem;
+            opacity: 0.8;
+            font-family: 'Courier New', monospace;
+        }
+
+        /* Main Content */
+        .main-content {
+            display: flex;
+            flex-direction: column;
+            background: #f5f5f5;
+        }
+
+        /* Audio Controls - Sticky at top */
+        .audio-controls {
+            background: #2d2d2d;
+            padding: 15px 20px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+            z-index: 100;
+        }
+
+        .audio-player {
+            width: 100%;
+            margin-bottom: 10px;
+            height: 35px;
+        }
+
+        .control-row {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin-bottom: 8px;
+        }
+
+        .control-btn {
+            padding: 8px 16px;
+            background: linear-gradient(135deg, #d4af37 0%, #b8941f 100%);
+            color: #1a1a1a;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            font-size: 0.85rem;
+        }
+
+        .control-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 2px 8px rgba(212, 175, 55, 0.5);
+        }
+
+        .control-btn.speed-active {
+            background: linear-gradient(135deg, #8b0000 0%, #a52a2a 100%);
+            color: #fff;
+        }
+
+        .time-display {
+            text-align: center;
+            color: #d4af37;
+            font-family: 'Courier New', monospace;
+            font-size: 0.95rem;
+            font-weight: bold;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 6px;
+            background: #1a1a1a;
+            border-radius: 3px;
+            overflow: hidden;
+            margin-top: 8px;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #d4af37 0%, #b8941f 100%);
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+
+        /* PDF Viewer Container */
+        .pdf-container {
+            flex: 1;
+            position: relative;
+            overflow: hidden;
+            background: #525659;
+        }
+
+        #pdfViewer {
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
+
+        /* Page indicator overlay */
+        .page-indicator {
+            position: absolute;
+            bottom: 20px;
+            right: 20px;
+            background: rgba(212, 175, 55, 0.95);
+            color: #1a1a1a;
+            padding: 15px 25px;
+            border-radius: 10px;
+            font-family: 'Courier New', monospace;
+            font-weight: bold;
+            font-size: 1.2rem;
+            z-index: 50;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
+            border: 3px solid #b8941f;
+        }
+        
+        .page-indicator .page-instruction {
+            font-size: 0.85rem;
+            margin-top: 5px;
+            color: #2d2d2d;
+        }
+
+        /* Instructions overlay */
+        .instructions-overlay {
+            position: absolute;
+            top: 80px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(212, 175, 55, 0.95);
+            color: #1a1a1a;
+            padding: 20px 30px;
+            border-radius: 10px;
+            max-width: 600px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+            z-index: 150;
+            display: none;
+        }
+
+        .instructions-overlay.show {
+            display: block;
+            animation: fadeIn 0.5s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateX(-50%) translateY(-20px); }
+            to { opacity: 1; transform: translateX(-50%) translateY(0); }
+        }
+
+        .instructions-overlay h3 {
+            margin-bottom: 10px;
+            font-size: 1.2rem;
+        }
+
+        .instructions-overlay ul {
+            margin-left: 20px;
+            line-height: 1.8;
+        }
+
+        .close-instructions {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: #8b0000;
+            color: white;
+            border: none;
+            width: 25px;
+            height: 25px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        .help-btn {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: #d4af37;
+            color: #1a1a1a;
+            border: none;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 1.5rem;
+            font-weight: bold;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
+            z-index: 200;
+        }
+
+        .help-btn:hover {
+            transform: scale(1.1);
+            box-shadow: 0 6px 20px rgba(212, 175, 55, 0.7);
+        }
+
+        /* Status messages */
+        .status-message {
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(139, 0, 0, 0.95);
+            color: white;
+            padding: 15px 30px;
+            border-radius: 8px;
+            font-weight: bold;
+            z-index: 250;
+            display: none;
+        }
+
+        .status-message.show {
+            display: block;
+            animation: slideDown 0.5s ease;
+        }
+
+        @keyframes slideDown {
+            from { transform: translateX(-50%) translateY(-50px); opacity: 0; }
+            to { transform: translateX(-50%) translateY(0); opacity: 1; }
+        }
+
+        /* Scrollbar */
+        ::-webkit-scrollbar {
+            width: 10px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #1a1a1a;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #d4af37;
+            border-radius: 5px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: #b8941f;
+        }
+    </style>
+</head>
+<body>
+    <!-- Status Message -->
+    <div class="status-message" id="statusMessage"></div>
+
+    <!-- Help Button -->
+    <button class="help-btn" onclick="toggleInstructions()">?</button>
+
+    <!-- Main Container -->
+    <div class="container">
+        <!-- Sidebar Navigation -->
+        <div class="sidebar">
+            <h2>📜 Act I Scenes</h2>
+            <div id="sceneNavigation"></div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="main-content">
+            <!-- Audio Controls -->
+            <div class="audio-controls">
+                <audio id="audioPlayer" class="audio-player" controls preload="auto">
+                    <source src="Crucible_1.mp3" type="audio/mpeg">
+                    Your browser does not support the audio element.
+                </audio>
+                
+                <div class="control-row">
+                    <button class="control-btn" onclick="rewind(10)">⏪ -10s</button>
+                    <button class="control-btn" onclick="rewind(5)">⏪ -5s</button>
+                    <button class="control-btn" onclick="togglePlay()">⏯ Play/Pause</button>
+                    <button class="control-btn" onclick="fastForward(5)">+5s ⏩</button>
+                    <button class="control-btn" onclick="fastForward(10)">+10s ⏩</button>
+                </div>
+                
+                <div class="control-row">
+                    <button class="control-btn" onclick="changeSpeed(0.75)" id="speed-0.75">0.75x</button>
+                    <button class="control-btn speed-active" onclick="changeSpeed(1)" id="speed-1">1.0x</button>
+                    <button class="control-btn" onclick="changeSpeed(1.25)" id="speed-1.25">1.25x</button>
+                    <button class="control-btn" onclick="changeSpeed(1.5)" id="speed-1.5">1.5x</button>
+                </div>
+
+                <div class="time-display" id="timeDisplay">00:00 / 00:00</div>
+                <div class="progress-bar">
+                    <div class="progress-fill" id="progressFill"></div>
+                </div>
+            </div>
+
+            <!-- PDF Viewer -->
+            <div class="pdf-container">
+                <iframe 
+                    id="pdfViewer" 
+                    src="07_Crucible_Act_I_Complete.pdf#page=1"
+                    onload="checkPdfLoaded()">
+                </iframe>
+                <div class="page-indicator" id="pageIndicator">
+                    <div>Page 562 Line 1</div>
+                    <div class="page-instruction">📖 Turn to this page</div>
+                </div>
+            </div>
+
+            <!-- Instructions Overlay -->
+            <div class="instructions-overlay" id="instructionsOverlay">
+                <button class="close-instructions" onclick="toggleInstructions()">✕</button>
+                <h3>📖 How to Use</h3>
+                <ul>
+                    <li><strong>Click scenes</strong> in the left sidebar to jump to that part</li>
+                    <li><strong>The PDF</strong> will automatically jump to the right page</li>
+                    <li><strong>Use audio controls</strong> to play, pause, skip, or adjust speed</li>
+                    <li><strong>Keyboard shortcuts:</strong> Spacebar (play/pause), Arrow keys (skip)</li>
+                    <li><strong>Follow along</strong> with your physical copy or on screen</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // ===== CONFIGURATION =====
+        const scenes = [
+            { id: 1, name: "Opening / Overture", time: 353, page: 562, line: 1 },
+            { id: 2, name: "Parris and Betty", time: 354, page: 564, line: 19 },
+            { id: 3, name: "Tituba Enters", time: 1049, page: 564, line: 20 },
+            { id: 4, name: "Abigail Arrives", time: 1121, page: 566, line: 25 },
+            { id: 5, name: "The Putnam Family", time: 1500, page: 568, line: 71 },
+            { id: 6, name: "John Proctor Enters", time: 2294, page: 574, line: 164 },
+            { id: 7, name: "Proctor and Abigail", time: 2550, page: 576, line: 184 },
+            { id: 8, name: "Rebecca Nurse", time: 2739, page: 578, line: 216 },
+            { id: 9, name: "Community Conflicts", time: 2950, page: 580, line: 241 },
+            { id: 10, name: "Reverend Hale Arrives", time: 3504, page: 582, line: 305 },
+            { id: 11, name: "Interrogating Tituba", time: 4100, page: 592, line: 409 },
+            { id: 12, name: "The Accusations Begin", time: 4650, page: 596, line: 462 }
+        ];
+
+        // ===== GLOBALS =====
+        let audio = document.getElementById('audioPlayer');
+        let pdfViewer = document.getElementById('pdfViewer');
+        let currentSpeed = 1;
+        let pdfLoaded = false;
+
+        // ===== INITIALIZATION =====
+        function init() {
+            createNavigation();
+            setupEventListeners();
+            showInstructions();
+            checkAudioFile();
+        }
+
+        // ===== CHECK AUDIO FILE =====
+        function checkAudioFile() {
+            audio.addEventListener('error', function(e) {
+                showStatus('⚠️ Audio file not found! Please ensure Crucible_1.mp3 is in the same folder as this HTML file.', 5000);
+            });
+            
+            audio.addEventListener('loadeddata', function() {
+                console.log('✓ Audio file loaded successfully');
+            });
+        }
+
+        // ===== CHECK PDF LOADED =====
+        function checkPdfLoaded() {
+            pdfLoaded = true;
+            console.log('✓ PDF loaded successfully');
+        }
+
+        // ===== NAVIGATION =====
+        function createNavigation() {
+            const nav = document.getElementById('sceneNavigation');
+            scenes.forEach(scene => {
+                const button = document.createElement('button');
+                button.className = 'scene-button';
+                button.id = `scene-btn-${scene.id}`;
+                button.innerHTML = `
+                    <span>${scene.name}</span>
+                    <span class="timestamp">${formatTime(scene.time)}<br>p.${scene.page}, ln.${scene.line}</span>
+                `;
+                button.onclick = () => jumpToScene(scene.id);
+                nav.appendChild(button);
+            });
+        }
+
+        function jumpToScene(sceneId) {
+            const scene = scenes.find(s => s.id === sceneId);
+            if (scene) {
+                // Jump audio
+                audio.currentTime = scene.time;
+                audio.play().catch(e => {
+                    console.warn('Audio play blocked:', e);
+                    showStatus('⚠️ Click the play button to start audio', 3000);
+                });
+                
+                // Jump PDF to page
+                jumpToPage(scene.page);
+                
+                // Update active button
+                updateActiveButton(sceneId);
+                
+                showStatus(`🎬 ${scene.name} - ${formatTime(scene.time)}`, 2000);
+            }
+        }
+
+        function jumpToPage(pageNum) {
+            try {
+                // Convert book page number to PDF page number
+                // Book pages start at 560 (on PDF page 4)
+                // So: PDF page = (Book page - 560) / 2 + 4
+                const pdfPage = Math.floor((pageNum - 560) / 2) + 4;
+                
+                // Try to force PDF navigation (may not work in all browsers)
+                const timestamp = new Date().getTime();
+                const pdfSrc = `07_Crucible_Act_I_Complete.pdf#page=${pdfPage}&t=${timestamp}`;
+                pdfViewer.src = pdfSrc;
+                
+                // Update the page indicator with clear instructions
+                const scene = scenes.find(s => s.page === pageNum);
+                const lineInfo = scene ? ` Line ${scene.line}` : '';
+                
+                document.getElementById('pageIndicator').innerHTML = `
+                    <div>Page ${pageNum}${lineInfo}</div>
+                    <div class="page-instruction">📖 ${scene ? scene.name : 'Turn to this page'}</div>
+                `;
+                
+                console.log(`Attempting jump to book page ${pageNum} (PDF page ${pdfPage})`);
+            } catch(e) {
+                console.error('Could not navigate PDF:', e);
+            }
+        }
+
+        function updateActiveButton(sceneId) {
+            document.querySelectorAll('.scene-button').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            const activeBtn = document.getElementById(`scene-btn-${sceneId}`);
+            if (activeBtn) {
+                activeBtn.classList.add('active');
+            }
+        }
+
+        // ===== AUTO PAGE TURNING =====
+        function updateCurrentScene() {
+            const currentTime = audio.currentTime;
+            let activeScene = null;
+            
+            for (let i = scenes.length - 1; i >= 0; i--) {
+                if (currentTime >= scenes[i].time) {
+                    activeScene = scenes[i];
+                    break;
+                }
+            }
+
+            if (activeScene) {
+                updateActiveButton(activeScene.id);
+                // Auto-turn page as audio plays
+                jumpToPage(activeScene.page);
+            }
+        }
+
+        // ===== PLAYBACK CONTROLS =====
+        function togglePlay() {
+            if (audio.paused) {
+                audio.play().catch(e => {
+                    showStatus('⚠️ Cannot play audio. Click the play button on the audio player.', 3000);
+                });
+            } else {
+                audio.pause();
+            }
+        }
+
+        function rewind(seconds) {
+            audio.currentTime = Math.max(0, audio.currentTime - seconds);
+        }
+
+        function fastForward(seconds) {
+            audio.currentTime = Math.min(audio.duration, audio.currentTime + seconds);
+        }
+
+        function changeSpeed(speed) {
+            audio.playbackRate = speed;
+            currentSpeed = speed;
+            
+            document.querySelectorAll('.control-btn').forEach(btn => {
+                btn.classList.remove('speed-active');
+            });
+            const speedBtn = document.getElementById(`speed-${speed}`);
+            if (speedBtn) {
+                speedBtn.classList.add('speed-active');
+            }
+        }
+
+        // ===== TIME DISPLAY =====
+        function formatTime(seconds) {
+            const mins = Math.floor(seconds / 60);
+            const secs = Math.floor(seconds % 60);
+            return `${String(mins).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
+        }
+
+        function updateTimeDisplay() {
+            if (!isNaN(audio.duration)) {
+                const current = formatTime(audio.currentTime);
+                const duration = formatTime(audio.duration);
+                document.getElementById('timeDisplay').textContent = `${current} / ${duration}`;
+                
+                const progress = (audio.currentTime / audio.duration) * 100;
+                document.getElementById('progressFill').style.width = `${progress}%`;
+            }
+        }
+
+        // ===== INSTRUCTIONS =====
+        function showInstructions() {
+            setTimeout(() => {
+                const overlay = document.getElementById('instructionsOverlay');
+                overlay.classList.add('show');
+                setTimeout(() => {
+                    overlay.classList.remove('show');
+                }, 8000);
+            }, 1000);
+        }
+
+        function toggleInstructions() {
+            const overlay = document.getElementById('instructionsOverlay');
+            overlay.classList.toggle('show');
+        }
+
+        // ===== STATUS MESSAGES =====
+        function showStatus(message, duration = 3000) {
+            const statusEl = document.getElementById('statusMessage');
+            statusEl.textContent = message;
+            statusEl.classList.add('show');
+            setTimeout(() => {
+                statusEl.classList.remove('show');
+            }, duration);
+        }
+
+        // ===== EVENT LISTENERS =====
+        function setupEventListeners() {
+            audio.addEventListener('timeupdate', () => {
+                updateTimeDisplay();
+                updateCurrentScene();
+            });
+
+            audio.addEventListener('loadedmetadata', updateTimeDisplay);
+            
+            audio.addEventListener('play', () => {
+                console.log('▶️ Audio playing');
+            });
+
+            audio.addEventListener('pause', () => {
+                console.log('⏸ Audio paused');
+            });
+
+            // Keyboard shortcuts
+            document.addEventListener('keydown', (e) => {
+                // Don't trigger if typing in an input
+                if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') {
+                    return;
+                }
+
+                switch(e.code) {
+                    case 'Space':
+                        e.preventDefault();
+                        togglePlay();
+                        break;
+                    case 'ArrowLeft':
+                        e.preventDefault();
+                        rewind(5);
+                        break;
+                    case 'ArrowRight':
+                        e.preventDefault();
+                        fastForward(5);
+                        break;
+                    case 'KeyH':
+                        toggleInstructions();
+                        break;
+                }
+            });
+        }
+
+        // ===== START THE APP =====
+        document.addEventListener('DOMContentLoaded', init);
+
+        // Debug info
+        console.log('🎭 The Crucible PDF Audio Reader initialized');
+        console.log('📁 Looking for audio at: Crucible_1.mp3');
+        console.log('📄 Looking for PDF at: 07_Crucible_Act_I_Complete.pdf');
+    </script>
+</body>
+</html>

@@ -1,0 +1,244 @@
+# QUICK SETUP GUIDE
+## The Crucible PDF Audio Reader
+
+## 🎯 What This Does
+
+- Shows the **actual PDF** on screen (the same one students have)
+- **Jumps to the right page** automatically when you click a scene
+- **Audio syncs** with the text - no confusion about which version to read
+
+---
+
+## 📁 STEP 1: Set Up Your Files
+
+Create a folder (anywhere on your computer) and put these files in it:
+
+```
+YourFolder/
+├── crucible_pdf_reader.html  (the file you just downloaded)
+├── Crucible_1.mp3            (your audio file)
+└── 07_Crucible_Act_I_Complete.pdf  (the PDF)
+```
+
+**IMPORTANT**: The files MUST be named exactly as shown above, or the program won't find them.
+
+---
+
+## 🚀 STEP 2: Open It
+
+Double-click `crucible_pdf_reader.html`
+
+It should open in your web browser (Chrome, Firefox, Edge, Safari - any will work).
+
+---
+
+## ✅ STEP 3: Test It
+
+You should see:
+- **Left sidebar** with scene buttons
+- **Audio player** at the top
+- **PDF** displayed in the main area
+
+### Try These Tests:
+
+1. **Click the play button** on the audio player (▶️ button)
+   - You should hear the audio start
+
+2. **Click a scene** in the left sidebar
+   - The PDF should jump to that page
+   - The audio should jump to that time
+
+3. **Try keyboard shortcuts**:
+   - Spacebar = Play/Pause
+   - Left Arrow = Rewind 5 seconds
+   - Right Arrow = Fast forward 5 seconds
+
+---
+
+## 🔧 TROUBLESHOOTING
+
+### ⚠️ "Audio file not found"
+
+**Problem**: You see a red warning about the audio file
+
+**Solutions**:
+1. Make sure `Crucible_1.mp3` is in the **same folder** as the HTML file
+2. Make sure it's spelled exactly: `Crucible_1.mp3` (capital C, underscore, no spaces)
+3. Try renaming your audio file to match exactly
+
+### ⚠️ PDF doesn't show
+
+**Problem**: The PDF area is blank or shows an error
+
+**Solutions**:
+1. Make sure the PDF is in the same folder
+2. Make sure it's named exactly: `07_Crucible_Act_I_Complete.pdf`
+3. Try opening the HTML file in a different browser
+4. Some browsers block PDFs - try Chrome or Firefox
+
+### ⚠️ Play button doesn't work
+
+**Problem**: Clicking play does nothing
+
+**Solutions**:
+1. Try clicking directly on the audio player's play button (not the button below it)
+2. Check your browser's address bar for a "blocked audio" icon - click it to allow
+3. Right-click the audio player and select "Play"
+4. Refresh the page (F5 or Cmd+R)
+
+### ⚠️ Scenes don't jump to the right page
+
+**Problem**: PDF stays on the same page when you click scenes
+
+**Solutions**:
+1. This is normal for some browsers - they restrict iframe navigation
+2. You can manually scroll the PDF to the right page
+3. The page number is shown in the bottom-right corner
+4. Try using Chrome or Firefox which handle this better
+
+---
+
+## 🎓 FOR CLASSROOM USE
+
+### Option 1: Teacher Display
+- Open the HTML file on your computer
+- Project it on your classroom screen
+- Students follow along with their physical copies
+
+### Option 2: Student Individual Use
+- Put all three files in a shared folder (Google Drive, OneDrive, etc.)
+- Students download all three files to their devices
+- Each student opens the HTML on their own device
+
+### Option 3: Chromebook/School Network
+- Work with your IT department to host the files
+- Students can access via a shared network drive
+- All files must remain in the same folder
+
+---
+
+## 📝 ADJUSTING TIMESTAMPS
+
+The timestamps are estimated. To make them perfect for your audio:
+
+1. **Listen to your audio file** and note when each scene begins
+2. **Open the HTML file** in a text editor (Notepad, TextEdit, VS Code)
+3. **Find this section** (around line 250):
+
+```javascript
+const scenes = [
+    { id: 1, name: "Opening / Overture", time: 0, page: 4 },
+    { id: 2, name: "Parris and Betty", time: 120, page: 4 },
+    // etc...
+];
+```
+
+4. **Change the `time:` values** to match your audio (time is in seconds)
+5. **Change the `page:` values** if needed to match your PDF
+6. **Save the file** and refresh your browser
+
+---
+
+## 🎨 PAGE NUMBER REFERENCE
+
+These are the approximate pages in the PDF for each scene:
+
+| Scene | PDF Page |
+|-------|----------|
+| Opening / Overture | 4 |
+| Parris and Betty | 4-6 |
+| Tituba Enters | 7-8 |
+| Abigail Arrives | 8-10 |
+| The Putnam Family | 11-15 |
+| John Proctor Enters | 16-17 |
+| Proctor and Abigail | 18-19 |
+| Rebecca Nurse | 20-22 |
+| Community Conflicts | 23-25 |
+| Reverend Hale Arrives | 26-31 |
+| Interrogating Tituba | 32-34 |
+| The Accusations Begin | 35-37 |
+
+---
+
+## 💡 TIPS
+
+### For Teachers:
+- **Pre-test** everything before class
+- **Bookmark** the HTML file for quick access
+- **Keep copies** of all files on a USB drive as backup
+- Consider creating **different versions** for different class periods with adjusted timestamps
+
+### For Students:
+- **Use headphones** for better audio quality
+- **Follow along** with a physical copy of the text
+- **Pause frequently** to take notes
+- **Use the speed controls** (0.75x is great for EL learners)
+
+### For EL Students:
+- **Start at 0.75x speed** to follow along more easily
+- **Replay sections** using the rewind button
+- **Read along** while listening for better comprehension
+- **Use physical copy** to annotate and take notes
+
+---
+
+## 🆘 STILL HAVING PROBLEMS?
+
+### Check These:
+
+- [ ] All three files are in the SAME folder
+- [ ] File names match EXACTLY (including capitals and numbers)
+- [ ] You're opening the HTML file (not the PDF or audio)
+- [ ] Your browser allows audio playback
+- [ ] You tried refreshing the page (F5)
+- [ ] You tried a different web browser
+
+### Advanced Fix: Manual Audio Path
+
+If the audio still won't play, try this:
+
+1. Open the HTML file in a text editor
+2. Find this line (around line 162):
+```html
+<source src="../uploads/Crucible_1.mp3" type="audio/mpeg">
+<source src="Crucible_1.mp3" type="audio/mpeg">
+```
+3. Change BOTH lines to just:
+```html
+<source src="Crucible_1.mp3" type="audio/mpeg">
+```
+4. Save and try again
+
+---
+
+## 📞 QUICK REFERENCE
+
+| Feature | How to Use |
+|---------|-----------|
+| Jump to scene | Click scene button in sidebar |
+| Play/Pause | Spacebar OR click ▶️ button |
+| Rewind | Left arrow OR click ⏪ buttons |
+| Fast forward | Right arrow OR click ⏩ buttons |
+| Change speed | Click speed buttons (0.75x - 1.5x) |
+| Help | Click ? button in bottom-right OR press H |
+
+---
+
+## ✅ SUCCESS CHECKLIST
+
+Before using in class, verify:
+
+- [ ] Audio plays when you click play
+- [ ] Scenes jump to correct times in audio
+- [ ] PDF displays correctly
+- [ ] Scene buttons highlight when active
+- [ ] Keyboard shortcuts work
+- [ ] Speed controls work
+- [ ] Time display updates
+- [ ] Students can follow along with physical copies
+
+---
+
+**Need more help?** Open the HTML file and press the **?** button in the bottom-right corner for quick instructions.
+
+**Good luck!** 🎭

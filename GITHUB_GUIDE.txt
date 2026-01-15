@@ -1,0 +1,259 @@
+=========================================
+  HOW TO PUT THIS ON GITHUB
+=========================================
+
+OPTION 1: EASY - USE GITHUB WEBSITE
+=========================================
+
+1. GO TO GITHUB.COM
+   - Log in (or create a free account)
+
+2. CREATE NEW REPOSITORY
+   - Click the "+" button in top right
+   - Click "New repository"
+   - Name it: "crucible-audio-reader"
+   - Description: "Interactive audio reader for The Crucible Act I"
+   - Choose "Public" (so students can access it)
+   - Check "Add a README file"
+   - Click "Create repository"
+
+3. UPLOAD YOUR FILES
+   - Click "Add file" button
+   - Click "Upload files"
+   - Drag all these files into the browser:
+     * crucible_pdf_reader.html
+     * Crucible_1.mp3
+     * 07_Crucible_Act_I_Complete.pdf
+     * README.txt
+     * SETUP_GUIDE.txt
+   - Click "Commit changes"
+
+4. ENABLE GITHUB PAGES (Makes it a website!)
+   - Go to Settings (top of page)
+   - Click "Pages" in left sidebar
+   - Under "Branch", select "main"
+   - Click "Save"
+   - Wait 1-2 minutes
+   - Your site will be at: 
+     https://YOUR-USERNAME.github.io/crucible-audio-reader/crucible_pdf_reader.html
+
+5. SHARE WITH STUDENTS
+   - Give them the URL above
+   - They can use it directly in their browser!
+   - No downloads needed!
+
+
+OPTION 2: ADVANCED - USE COMMAND LINE
+=========================================
+
+If you have Git installed:
+
+1. OPEN TERMINAL/COMMAND PROMPT
+
+2. NAVIGATE TO YOUR FOLDER
+   cd path/to/Crucible_Audio_Reader
+
+3. INITIALIZE GIT
+   git init
+   git add .
+   git commit -m "Initial commit - Crucible Audio Reader"
+
+4. CREATE REPO ON GITHUB (via website)
+   - Go to github.com
+   - Create new repository (as in Option 1)
+   - DON'T check "Add a README" this time
+
+5. CONNECT AND PUSH
+   git remote add origin https://github.com/YOUR-USERNAME/crucible-audio-reader.git
+   git branch -M main
+   git push -u origin main
+
+6. ENABLE GITHUB PAGES (same as Option 1, step 4)
+
+
+OPTION 3: DESKTOP APP
+=========================================
+
+1. DOWNLOAD GITHUB DESKTOP
+   https://desktop.github.com/
+
+2. OPEN THE APP
+   - Sign in to GitHub
+   - Click "Create New Repository"
+   - Name: crucible-audio-reader
+   - Local Path: Choose where your files are
+   - Click "Create Repository"
+
+3. PUBLISH TO GITHUB
+   - Click "Publish repository"
+   - Uncheck "Keep this code private" (so students can access)
+   - Click "Publish Repository"
+
+4. ENABLE GITHUB PAGES (same as Option 1, step 4)
+
+
+IMPORTANT NOTES
+=========================================
+
+⚠️  FILE SIZE WARNING:
+GitHub has a 100MB file size limit. Your audio file 
+(Crucible_1.mp3 - 26MB) is fine, but if you add more 
+acts, you might hit the limit.
+
+If you get file size errors:
+- Option A: Use Git LFS (Large File Storage)
+- Option B: Host audio elsewhere (Google Drive, Dropbox)
+  and link to it in the HTML
+
+📝 .gitignore FILE:
+You might want to create a .gitignore file to exclude
+certain files. Create a file named ".gitignore" with:
+
+# Large files (if needed)
+*.mp3
+*.pdf
+
+(But for this project, you WANT to include these!)
+
+
+UPDATING YOUR PROJECT
+=========================================
+
+When you make changes:
+
+OPTION 1 (Website):
+1. Go to your repository on GitHub
+2. Click on the file to update
+3. Click the pencil icon (Edit)
+4. Make changes
+5. Click "Commit changes"
+
+OPTION 2 (Desktop App):
+1. Make changes to files locally
+2. Open GitHub Desktop
+3. It will show your changes
+4. Add commit message
+5. Click "Commit to main"
+6. Click "Push origin"
+
+OPTION 3 (Command Line):
+git add .
+git commit -m "Updated timestamps"
+git push
+
+
+SHARING WITH STUDENTS
+=========================================
+
+Once on GitHub Pages, students can:
+
+✅ Open directly in browser (no download)
+✅ Bookmark the link
+✅ Works on Chromebooks, iPads, phones
+✅ Always get the latest version
+
+Your link will be:
+https://YOUR-USERNAME.github.io/crucible-audio-reader/crucible_pdf_reader.html
+
+Example:
+https://ryanteacher.github.io/crucible-audio-reader/crucible_pdf_reader.html
+
+
+PRIVACY & COPYRIGHT
+=========================================
+
+⚠️  IMPORTANT CONSIDERATIONS:
+
+1. PUBLIC vs PRIVATE:
+   - Public = Anyone can see and download
+   - Private = Only you (and people you invite)
+   - For classroom use, Public is usually fine
+
+2. COPYRIGHT:
+   - The Crucible text is copyrighted
+   - Fair Use likely applies for educational use
+   - Consider if your school has permissions
+   - You might want to make repo private
+   - Or remove PDF and have students use physical books
+
+3. AUDIO:
+   - Make sure you have rights to the audio recording
+   - If it's from an audiobook, check licensing
+
+
+TROUBLESHOOTING
+=========================================
+
+"File too large" error:
+→ Use Git LFS or host files elsewhere
+
+Can't find my repository:
+→ Go to github.com/YOUR-USERNAME
+
+GitHub Pages not working:
+→ Wait a few minutes, check Settings > Pages
+→ Make sure file is named exactly: crucible_pdf_reader.html
+
+Students can't access:
+→ Make sure repository is Public
+→ Check the URL is correct
+→ Make sure GitHub Pages is enabled
+
+
+HELPFUL GITHUB RESOURCES
+=========================================
+
+GitHub Docs: https://docs.github.com
+GitHub Pages: https://pages.github.com
+GitHub Desktop: https://desktop.github.com
+
+
+SAMPLE README.md FOR GITHUB
+=========================================
+
+Create this as your repository README:
+
+---
+# The Crucible Audio Reader - Act I
+
+An interactive audio-synced reader for Arthur Miller's *The Crucible*.
+
+## Features
+- 🎧 Synchronized audio playback
+- 📖 PDF display with page navigation
+- 🎯 Scene-by-scene navigation
+- ⏩ Adjustable playback speed
+- 📍 Line number references
+
+## Usage
+1. Open `crucible_pdf_reader.html` in a web browser
+2. Click play to start the audio
+3. Click scene buttons to jump to specific parts
+4. Follow along with the PDF or your physical book
+
+## For Students
+Use the page and line numbers shown to follow along 
+in your physical copy of the text.
+
+## Technical Details
+- Pure HTML/CSS/JavaScript (no dependencies)
+- Works in all modern browsers
+- Optimized for classroom use
+
+## Credits
+Created for Glencliff High School ELA
+---
+
+
+NEXT STEPS
+=========================================
+
+1. ✅ Update Abigail's timestamp (DONE - now 18:41)
+2. Choose an option above (I recommend Option 1 - easiest!)
+3. Upload to GitHub
+4. Enable GitHub Pages
+5. Share the link with students
+6. Test with a few students first
+
+
+Need help with any step? Let me know!
